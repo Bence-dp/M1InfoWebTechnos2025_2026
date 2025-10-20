@@ -10,11 +10,9 @@
 
 <body>
     <h1>Load a sound sample using fetch, decode it and play it using Web Audio</H1>
-    <p>The button below will be enabled when the sound is loaded. The download of the sound starts as soon as the page
-        is being loaded.</p>
-    <button id="playButton" disabled=true>Play sound</button>
+    <p>The buttons below are created dynamically based on the loaded sounds.</p>
+    <div id="buttonsContainer"></div>
 
-    Try clicking rapidly on the button.
     <div class="wrapper">
         <canvas id="myCanvas" width=600 height=100></canvas>
         <canvas id="myCanvasOverlay" width=600 height=100></canvas>

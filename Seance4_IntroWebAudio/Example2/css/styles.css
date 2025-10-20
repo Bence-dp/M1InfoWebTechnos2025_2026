@@ -20,3 +20,10 @@
   position: absolute;
   z-index:10;
 }
+
+/* Highlight the selected sample button */
+button.selected {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+}

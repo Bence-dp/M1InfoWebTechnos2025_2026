@@ -3,14 +3,17 @@
     width: 400px;
     height: 300px;
 }
-
+body{
+  background-color: black;
+  color: white;
+}
 .wrapper canvas {
     position: absolute;
     top: 0;
     left: 0;
 }
 #myCanvas {
-  border: 1px solid black;
+  border: 1px solid white;
   background-color:black;
   z-index:0;
 }
@@ -19,4 +22,72 @@
   border:1px solid red;
   position: absolute;
   z-index:10;
+  
+}
+
+/* 4x4 pad grid for sampler */
+.pad-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  grid-template-rows: repeat(4, 100px);
+  gap: 10px;
+  margin-top: 16px;
+  background-color: black;
+
+
+}
+
+.pad {
+  width: 100px;
+  height: 100px;
+  background: #333333;
+  color: #fff;
+  border: 1px solid red;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.6);
+  transition: transform 0.1s ease, background 0.5s;
+  
+}
+
+.pad:active {
+  transform: translateY(2px);
+  background: #4CAF50;
+  
+}
+
+.pad.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.sampler-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
+  
+}
+
+.visualizer {
+  min-width: 620px;
+}
+
+.wrapper {
+  position: relative;
+}
+
+#myCanvas {
+  border: 1px solid #333;
+  background: #000;
+}
+
+#myCanvasOverlay {
+  position: absolute;
+  left: 0;
+  top: 0;
 }

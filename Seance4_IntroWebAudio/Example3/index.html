@@ -11,7 +11,21 @@
 <body>
     <h1>Load a set of sounds with Promise.all and fetch</H1>
     <p>The buttons below are created dynamically based on the loaded sounds.</p>
-    <div id="buttonsContainer"></div>
+    <label for="presetSelect">Choose preset:</label>
+    <select id="presetSelect"></select>
+    <div class="sampler-container">
+        <div id="padGrid" class="pad-grid" aria-label="Sampler pads"></div>
+
+        <div class="visualizer">
+            <div class="wrapper">
+                <canvas id="myCanvas" width="600" height="120"></canvas>
+                <canvas id="myCanvasOverlay" width="600" height="120"></canvas>
+            </div>
+            <div style="margin-top:8px;">
+                <!-- pads play immediately on click; no separate play button -->
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

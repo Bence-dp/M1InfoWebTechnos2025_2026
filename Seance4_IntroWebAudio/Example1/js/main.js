@@ -9,9 +9,25 @@ import { loadAndDecodeSound, playSound } from './soundutils.js';
 // The AudioContext object is the main "entry point" into the Web Audio API
 let ctx;
 
+
 const soundURL =
     'https://mainline.i3s.unice.fr/mooc/shoot2.mp3';
-let decodedSound;
+
+const soundURLs = [
+   'https://upload.wikimedia.org/wikipedia/commons/a/a3/Hardstyle_kick.wav',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Redoblante_de_marcha.ogg/Redoblante_de_marcha.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c9/Hi-Hat_Cerrado.ogg/Hi-Hat_Cerrado.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/0/07/Hi-Hat_Abierto.ogg/Hi-Hat_Abierto.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3c/Tom_Agudo.ogg/Tom_Agudo.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a4/Tom_Medio.ogg/Tom_Medio.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/8/8d/Tom_Grave.ogg/Tom_Grave.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/6/68/Crash.ogg/Crash.ogg.mp3',
+   'https://upload.wikimedia.org/wikipedia/commons/transcoded/2/24/Ride.ogg/Ride.ogg.mp3'
+];
+
+
+// store all decoded buffers here when loaded in parallel
+let decodedSounds = [];
 
 // The button for playing the sound
 let playButton = document.querySelector("#playButton");
@@ -19,22 +35,46 @@ let playButton = document.querySelector("#playButton");
 playButton.disabled = true;
 
 window.onload = async function init() {
+
     ctx = new AudioContext();
-
-
-    // load and decode the sound
-    // this is asynchronous, we use await to wait for the end of the loading and decoding
-    // before going to the next instruction
-    // Note that we cannot use await outside an async function
-    // so we had to declare the init function as async
-    decodedSound = await loadAndDecodeSound(soundURL, ctx);
+    // Load and decode all sounds in parallel using Promise.all
+    // build an array of promises then await them together
+    const loadPromises = soundURLs.map(url => loadAndDecodeSound(url, ctx));
+    try {
+        decodedSounds = await Promise.all(loadPromises);
+        console.log(`Loaded ${decodedSounds.length} sounds`);
+    } catch (err) {
+        console.error('Error loading one of the sounds:', err);
+        // keep the button disabled if something failed
+        return;
+    }
  
-    // we enable the play sound button, now that the sound is loaded and decoded
+    // we enable the play sound button, now that the sounds are loaded
     playButton.disabled = false;
 
-    // Event listener for the button. When the button is pressed, we play the sound
-    playButton.onclick = function (evt) {
-         // from utils.js
-        playSound(ctx, decodedSound, 0, decodedSound.duration);
+    // Event listener for the main button. When pressed we play the first loaded buffer.
+    playButton.onclick = async function (evt) {
+        if (ctx.state === 'suspended') await ctx.resume();
+        const buffer = decodedSounds[0];
+        if (!buffer) return;
+        playSound(ctx, buffer, 0, buffer.duration);
+    }
+
+    // Create one button per loaded sound inside the #soundbuttons div
+    const container = document.querySelector('#soundbuttons');
+    if (container) {
+        container.innerHTML = '';
+        decodedSounds.forEach((buffer, i) => {
+            const btn = document.createElement('button');
+            // try to extract a friendly name from the URL, fallback to index
+            let label;
+            try { label = new URL(soundURLs[i]).pathname.split('/').pop(); } catch (e) { label = `Sound ${i+1}`; }
+            btn.textContent = label || `Sound ${i+1}`;
+            btn.onclick = async () => {
+                if (ctx.state === 'suspended') await ctx.resume();
+                playSound(ctx, buffer, 0, buffer.duration);
+            };
+            container.appendChild(btn);
+        });
     }
 }
