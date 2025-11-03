@@ -16,7 +16,7 @@ import {
 
 export const app = express();
 app.use(express.json({ limit: "2mb" }));
-// Enable CORS for all routes (allowing requests from other clients)
+
 app.use(cors());
 
 // configure multer for file uploads

@@ -12,7 +12,6 @@ import { pixelToSeconds } from '../../Example2/js/utils.js';
 // The AudioContext object is the main "entry point" into the Web Audio API
 let ctx;
 
-// fallback list if server not available
 const fallbackSoundURLs = [
     'https://upload.wikimedia.org/wikipedia/commons/a/a3/Hardstyle_kick.wav',
     'https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c7/Redoblante_de_marcha.ogg/Redoblante_de_marcha.ogg.mp3',
@@ -115,8 +114,7 @@ async function loadAndShow(samples) {
     // clear previous pads
     const padGrid = document.querySelector('#padGrid');
     padGrid.innerHTML = '';
-    // samples is array of {url, name}
-    // load & decode each sample and keep metadata
+
     const decodePromises = samples.map(s => loadAndDecodeSound(s.url, ctx)
         .then(buf => ({ buf, name: s.name }))
         .catch(e => { console.error('load failed', s.url, e); return null; }));
@@ -124,7 +122,6 @@ async function loadAndShow(samples) {
     const results = await Promise.all(decodePromises);
     const good = results.map((r, i) => ({ buf: r ? r.buf : null, name: r ? r.name : samples[i].name })).filter(x => x.buf !== null);
 
-    // create 4x4 pads (16) and assign samples row-wise from bottom
     const cols = 4, rows = 4;
     const padBuffers = new Array(cols * rows).fill(null);
 
